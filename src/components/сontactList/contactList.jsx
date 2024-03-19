@@ -1,6 +1,5 @@
 import React, { Component } from "react";
-// import "./contactList.scss";
-
+import "./contactList.scss";
 class ContactList extends Component {
   constructor(props) {
     super(props);
@@ -31,9 +30,9 @@ class ContactList extends Component {
     const { contacts } = this.state;
 
     return (
-      <div>
+      <div className="Parent">
         <h1>Contacts</h1>
-        <table>
+        <table className="table">
           <thead>
             <tr>
               <th>Name</th>
