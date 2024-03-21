@@ -1,152 +1,117 @@
-// // import React, { Component } from "react";
-// // import ContactList from "./components/сontactList/contactList";
-// // import ContactsForm from "./components/contactForm/contactsForm";
-// // class App extends Component {
-// //   constructor(props) {
-// //     super(props);
-// //     this.state = {
-// //       contacts: props.contacts,
-// //     };
-// //   }
-// //   componentDidCatch(prevProps, prevState) {
-// //     if (prevProps.contacts !== this.props.contacts) {
-// //       this.setState({ contacts: this.props.contacts });
-// //     }
-// //   }
-// //   render() {
-// //     return (
-// //       <div>
-// //         <ContactList />
-// //         <ContactsForm />
-// //       </div>
-// //     );
-// //   }
-// // }
-// // export default App;
-// import React, { Component } from "react";
-// import ContactList from "./components/сontactList/contactList";
-// import ContactsForm from "./components/contactForm/contactsForm";
-
-// class App extends Component {
-//   constructor(props) {
-//     super(props);
-//     this.state = {
-//       contacts: [], // Початково дані контактів порожні
-//     };
-//   }
-
-//   componentDidMount() {
-//     // Викликаємо метод fetchContacts для завантаження даних з API після монтування компонента
-//     this.fetchContacts();
-//   }
-
-//   fetchContacts = async () => {
-//     try {
-//       const response = await fetch(
-//         "https://jsonplaceholder.typicode.com/users"
-//       );
-//       const data = await response.json();
-//       this.setState({ contacts: data });
-//     } catch (error) {
-//       console.error("Error fetching contacts:", error);
-//     }
-//   };
-
-//   render() {
-//     return (
-//       <div>
-//         {/* Передаємо дані контактів через пропси у дочірні компоненти */}
-//         <ContactList contacts={this.state.contacts} />
-//         <ContactsForm />
-//       </div>
-//     );
-//   }
-// }
-
-// export default App;
-
 import React, { Component } from "react";
+// import "./contactList.scss";
 
-class Contacts extends Component {
+class ContactLister extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      contacts: [], // Початково список контактів порожній
-      isFormVisible: false, // Стан для відображення форми додавання контакту
-      newName: "",
-      newSurname: "",
-      newPhone: "",
+      contacts: [],
+      name: "",
+      surname: "",
+      phone: "",
+      isFormVisible: false,
     };
   }
 
-  componentDidMount() {
-    // Симуляція завантаження списку контактів з сервера
-    this.setState({
-      contacts: [
-        { id: 1, name: "Іван", surname: "Петров", phone: "123-456-7890" },
-        { id: 2, name: "Марія", surname: "Іванова", phone: "987-654-3210" },
-      ],
-    });
-  }
-
-  handleDelete = (id) => {
+  addContact = () => {
+    const { name, surname, phone } = this.state;
+    const newContact = {
+      id: Date.now(),
+      name,
+      surname,
+      phone,
+    };
     this.setState((prevState) => ({
-      contacts: prevState.contacts.filter((contact) => contact.id !== id),
+      contacts: [...prevState.contacts, newContact],
+      name: "",
+      surname: "",
+      phone: "",
+      isFormVisible: false,
     }));
+  };
+
+  deleteContact = (id) => {
+    this.setState({
+      contacts: this.state.contacts.filter((contact) => contact.id !== id),
+    });
+  };
+
+  handleSubmit = (e) => {
+    e.preventDefault();
+    this.addContact();
+  };
+
+  handleChange = (e) => {
+    const { name, value } = e.target;
+    this.setState({ [name]: value });
   };
 
   handleShowForm = () => {
     this.setState({ isFormVisible: true });
   };
 
-  handleHideForm = () => {
+  handleCancel = () => {
     this.setState({
+      name: "",
+      surname: "",
+      phone: "",
       isFormVisible: false,
-      newName: "",
-      newSurname: "",
-      newPhone: "",
     });
   };
 
-  handleChange = (e) => {
-    this.setState({ [e.target.name]: e.target.value });
-  };
-
-  handleSubmit = (e) => {
-    e.preventDefault();
-    const { newName, newSurname, newPhone } = this.state;
-    // Генеруємо новий id для контакту (для демонстрації використовуємо простий метод)
-    const newId = Math.floor(Math.random() * 1000) + 1;
-    const newContact = {
-      id: newId,
-      name: newName,
-      surname: newSurname,
-      phone: newPhone,
-    };
-    // Додаємо новий контакт до списку контактів
-    this.setState((prevState) => ({
-      contacts: [...prevState.contacts, newContact],
-      newName: "",
-      newSurname: "",
-      newPhone: "",
-      isFormVisible: false, // Сховати форму після збереження контакту
-    }));
-  };
-
   render() {
-    const { contacts, isFormVisible, newName, newSurname, newPhone } =
-      this.state;
+    const { contacts, isFormVisible, name, surname, phone } = this.state;
 
     return (
-      <div>
-        <h1>Контакти</h1>
-        <table>
+      <div className="Parent">
+        <h1>Contacts</h1>
+        {isFormVisible && (
+          <div>
+            <h2>Додати новий контакт</h2>
+            <form onSubmit={this.handleSubmit}>
+              <div>
+                <input
+                  type="text"
+                  name="name"
+                  value={name}
+                  onChange={this.handleChange}
+                  placeholder="Ім'я"
+                />
+              </div>
+              <div>
+                <input
+                  type="text"
+                  name="surname"
+                  value={surname}
+                  onChange={this.handleChange}
+                  placeholder="Прізвище"
+                />
+              </div>
+              <div>
+                <input
+                  type="text"
+                  name="phone"
+                  value={phone}
+                  onChange={this.handleChange}
+                  placeholder="Телефон"
+                />
+              </div>
+              <div>
+                <button type="submit">Додати</button>
+                <button type="button" onClick={this.handleCancel}>
+                  Скасувати
+                </button>
+              </div>
+            </form>
+          </div>
+        )}
+        <table className="table">
           <thead>
             <tr>
-              <th>Ім'я</th>
-              <th>Прізвище</th>
-              <th>Телефон</th>
-              <th>Дії</th>
+              <th>Name</th>
+              <th>Surname</th>
+              <th>Phone</th>
+              <th>Delete</th>
             </tr>
           </thead>
           <tbody>
@@ -156,8 +121,8 @@ class Contacts extends Component {
                 <td>{contact.surname}</td>
                 <td>{contact.phone}</td>
                 <td>
-                  <button onClick={() => this.handleDelete(contact.id)}>
-                    Видалити
+                  <button onClick={() => this.deleteContact(contact.id)}>
+                    Delete
                   </button>
                 </td>
               </tr>
@@ -165,47 +130,9 @@ class Contacts extends Component {
           </tbody>
         </table>
         <button onClick={this.handleShowForm}>Додати контакт</button>
-
-        {/* Форма для додавання нового контакту */}
-        {isFormVisible && (
-          <form onSubmit={this.handleSubmit}>
-            <h2>Додати новий контакт</h2>
-            <div>
-              <label>Ім'я:</label>
-              <input
-                type="text"
-                name="newName"
-                value={newName}
-                onChange={this.handleChange}
-              />
-            </div>
-            <div>
-              <label>Прізвище:</label>
-              <input
-                type="text"
-                name="newSurname"
-                value={newSurname}
-                onChange={this.handleChange}
-              />
-            </div>
-            <div>
-              <label>Телефон:</label>
-              <input
-                type="text"
-                name="newPhone"
-                value={newPhone}
-                onChange={this.handleChange}
-              />
-            </div>
-            <button type="submit">Зберегти</button>
-            <button type="button" onClick={this.handleHideForm}>
-              Скасувати
-            </button>
-          </form>
-        )}
       </div>
     );
   }
 }
 
-export default Contacts;
+export default ContactLister;
