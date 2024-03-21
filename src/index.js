@@ -1,10 +1,11 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
-import ContactList from "./components/сontactList/contactList";
+import Contacts from "./App";
+
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    <ContactList />
+    <Contacts />
   </React.StrictMode>
 );
