@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import ContactForm from "../contactForm/contactsForm";
 import ContactItem from "../contactItem/contactItem";
 import "./contactList.scss";
+
 class ContactList extends Component {
   constructor(props) {
     super(props);
@@ -11,6 +12,19 @@ class ContactList extends Component {
     };
   }
 
+  componentDidMount() {
+    fetch("https://jsonplaceholder.typicode.com/users")
+      .then((response) => response.json())
+      .then((data) => {
+        const contacts = data.slice(0, 5).map((user) => ({
+          id: user.id,
+          name: user.name,
+          surname: user.username,
+          phone: user.phone,
+        }));
+        this.setState({ contacts });
+      });
+  }
   addContact = (newContact) => {
     newContact.id = Date.now();
     this.setState((prevState) => ({
@@ -25,12 +39,10 @@ class ContactList extends Component {
     });
   };
 
-  handleShowForm = () => {
-    this.setState({ isFormVisible: true });
-  };
-
-  handleCancel = () => {
-    this.setState({ isFormVisible: false });
+  toggleFormVisibility = () => {
+    this.setState((prevState) => ({
+      isFormVisible: !prevState.isFormVisible,
+    }));
   };
 
   render() {
@@ -42,7 +54,7 @@ class ContactList extends Component {
         {isFormVisible && (
           <ContactForm
             addContact={this.addContact}
-            handleCancel={this.handleCancel}
+            handleCancel={this.toggleFormVisibility}
           />
         )}
         <table className="table">
@@ -64,9 +76,10 @@ class ContactList extends Component {
             ))}
           </tbody>
         </table>
-        <button onClick={this.handleShowForm}>Додати контакт</button>
+        <button onClick={this.toggleFormVisibility}>Додати контакт</button>
       </div>
     );
   }
 }
+
 export default ContactList;

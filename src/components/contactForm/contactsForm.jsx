@@ -15,13 +15,26 @@ class ContactForm extends Component {
     this.setState({ [name]: value });
   };
 
+  // handleSubmit = (e) => {
+  //   e.preventDefault();
+  //   const { name, surname, phone } = this.state;
+  //   this.props.addContact({ name, surname, phone });
+  //   this.setState({ name: "", surname: "", phone: "" });
+  // };
+
   handleSubmit = (e) => {
     e.preventDefault();
     const { name, surname, phone } = this.state;
+
+    // Перевіряємо, чи всі поля заповнені
+    if (!name.trim() || !surname.trim() || !phone.trim()) {
+      alert("Будь ласка, заповніть всі поля");
+      return;
+    }
+
     this.props.addContact({ name, surname, phone });
     this.setState({ name: "", surname: "", phone: "" });
   };
-
   render() {
     const { name, surname, phone } = this.state;
     return (
